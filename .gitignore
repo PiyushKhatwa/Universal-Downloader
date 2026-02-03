@@ -1,20 +1,17 @@
-# dependencies
-node_modules/
+# downloaded media
+*.mp4
+*.mkv
+*.webm
+*.mp3
+*.wav
+
+# temp folders
+universal-downloader/
+tmp/
+temp/
 
 # secrets
 cookies.txt
-.env
 
-# downloads
-*.webm
-*.mkv
-*.wav
-
-# temp
-tmp/
-temp/
-universal-downloader/
-
-# OS junk
-.DS_Store
-Thumbs.db
+# dependencies
+node_modules/
