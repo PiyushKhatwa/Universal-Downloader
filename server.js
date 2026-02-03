@@ -1,13 +1,3 @@
-const { execSync } = require("child_process");
-if (process.platform !== "win32") {
-  try {
-    execSync("chmod +x ./yt-dlp");
-  } catch (e) {
-    console.log("yt-dlp already executable");
-  }
-}
-
-
 const express = require("express");
 const { spawn, spawnSync } = require("child_process");
 const fs = require("fs");
@@ -19,6 +9,20 @@ const app = express();
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static("public"));
+if (process.platform !== "win32") {
+  const ytdlpPath = path.join(__dirname, "yt-dlp");
+  if (fs.existsSync(ytdlpPath)) {
+    try {
+      fs.chmodSync(ytdlpPath, 0o755);
+      console.log("yt-dlp permission set");
+    } catch (e) {
+      console.error("Failed to chmod yt-dlp:", e.message);
+    }
+  } else {
+    console.error("yt-dlp binary not found at startup");
+  }
+}
+
 
 // const YTDLP_PATH = "C:\\Users\\piyus\\AppData\\Local\\Microsoft\\WinGet\\Links\\yt-dlp.exe";
 // const FFMPEG_PATH =
