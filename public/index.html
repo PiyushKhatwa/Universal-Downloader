@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Universal Downloader</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="box">
+  <div class="header">
+    <h1>Universal Downloader</h1>
+    <p class="subtitle">Analyze once, download the exact format you want.</p>
+  </div>
+
+  <div class="input-row">
+    <input id="link" placeholder="Paste a YouTube / YT Music / Instagram link" autocomplete="off">
+    <button id="analyzeBtn" class="primary">
+      <span>Analyze</span>
+    </button>
+  </div>
+
+  <div id="state" class="state" data-state="idle">
+    <span id="stateLabel">Idle</span>
+    <span id="stateSpinner" class="spinner hidden" aria-hidden="true"></span>
+  </div>
+  <div id="error" class="error hidden"></div>
+  <div id="success" class="success hidden"></div>
+
+  <section id="formatsSection" class="section hidden">
+    <h2>Select Quality</h2>
+    <div id="qualityBar" class="quality-bar hidden">
+      <span class="quality-label">Quick select</span>
+      <div id="qualityButtons" class="quality-buttons"></div>
+    </div>
+    <div id="formatOptions" class="options"></div>
+  </section>
+
+  <section id="downloadSection" class="section hidden">
+    <div class="download-row">
+      <!-- <button id="pickFolderBtn" class="secondary">Choose Download Folder</button> -->
+      <span id="folderHint" class="hint">File will be downloaded to default Downloads folder.</span>
+    </div>
+    <button id="downloadBtn" class="primary" disabled>Download</button>
+  </section>
+
+  <section id="progressSection" class="section hidden">
+    <div class="progress-bar">
+      <div id="progressFill" class="progress-fill"></div>
+    </div>
+    <div class="progress-meta">
+      <span id="progressPercent">0%</span>
+      <span id="progressSpeed">-</span>
+      <span id="progressEta">ETA --:--</span>
+      <span id="progressStatus">Idle</span>
+    </div>
+  </section>
+
+  <pre id="log" class="log hidden"></pre>
+</div>
+<div id="warning">
+  “For educational and personal use only”
+</div>
+<script src="script.js"></script>
+</body>
+</html>
