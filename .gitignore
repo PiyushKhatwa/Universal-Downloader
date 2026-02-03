@@ -1,0 +1,20 @@
+# dependencies
+node_modules/
+
+# secrets
+cookies.txt
+.env
+
+# downloads
+*.webm
+*.mkv
+*.wav
+
+# temp
+tmp/
+temp/
+universal-downloader/
+
+# OS junk
+.DS_Store
+Thumbs.db
