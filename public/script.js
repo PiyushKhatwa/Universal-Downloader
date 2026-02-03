@@ -1,17 +1,23 @@
-const DEFAULT_API_ORIGIN = "http://localhost:3000";
-const CURRENT_ORIGIN =
-    window.location.origin && window.location.origin !== "null"
-        ? window.location.origin
-        : "";
-const API_ORIGIN =
-    CURRENT_ORIGIN && window.location.port === "3000"
-        ? CURRENT_ORIGIN
-        : DEFAULT_API_ORIGIN;
+// const DEFAULT_API_ORIGIN = "http://localhost:3000";
+// const CURRENT_ORIGIN =
+//     window.location.origin && window.location.origin !== "null"
+//         ? window.location.origin
+//         : "";
+// const API_ORIGIN =
+//     CURRENT_ORIGIN && window.location.port === "3000"
+//         ? CURRENT_ORIGIN
+//         : DEFAULT_API_ORIGIN;
 const API = {
-    analyze: `${API_ORIGIN}/api/analyze`,
-    download: `${API_ORIGIN}/api/download`,
-    progress: `${API_ORIGIN}/api/progress`,
+  analyze: "/api/analyze",
+  download: "/api/download",
+  progress: "/api/progress"
 };
+
+// const API = {
+//     analyze: `${API_ORIGIN}/api/analyze`,
+//     download: `${API_ORIGIN}/api/download`,
+//     progress: `${API_ORIGIN}/api/progress`,
+// };
 
 const ui = {};
 
