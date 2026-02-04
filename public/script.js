@@ -1,23 +1,8 @@
-    // const DEFAULT_API_ORIGIN = "http://localhost:3000";
-    // const CURRENT_ORIGIN =
-    //     window.location.origin && window.location.origin !== "null"
-    //         ? window.location.origin
-    //         : "";
-    // const API_ORIGIN =
-    //     CURRENT_ORIGIN && window.location.port === "3000"
-    //         ? CURRENT_ORIGIN
-    //         : DEFAULT_API_ORIGIN;
     const API = {
-    analyze: "/api/analyze",
-    download: "/api/download",
-    progress: "/api/progress"
+        analyze: "/api/analyze",
+        download: "/api/download",
+        progress: "/api/progress",
     };
-
-    // const API = {
-    //     analyze: `${API_ORIGIN}/api/analyze`,
-    //     download: `${API_ORIGIN}/api/download`,
-    //     progress: `${API_ORIGIN}/api/progress`,
-    // };
 
     const ui = {};
 
@@ -54,7 +39,6 @@
         ui.qualityBar = document.getElementById("qualityBar");
         ui.qualityButtons = document.getElementById("qualityButtons");
         ui.downloadSection = document.getElementById("downloadSection");
-        ui.pickFolderBtn = document.getElementById("pickFolderBtn");
         ui.folderHint = document.getElementById("folderHint");
         ui.downloadBtn = document.getElementById("downloadBtn");
         ui.progressSection = document.getElementById("progressSection");
@@ -111,7 +95,6 @@
     function setControlsDisabled(disabled) {
         if (ui.linkInput) ui.linkInput.disabled = disabled;
         if (ui.analyzeBtn) ui.analyzeBtn.disabled = disabled;
-        if (ui.pickFolderBtn) ui.pickFolderBtn.disabled = disabled;
         if (ui.downloadBtn) ui.downloadBtn.disabled = disabled || !appState.selectedFormat;
         if (ui.formatOptions) {
             const inputs = ui.formatOptions.querySelectorAll("input[type='radio']");
@@ -383,7 +366,7 @@
             setError(payload.message || "Download failed.");
             setState(STATES.error);
             setControlsDisabled(false);
-        if (ui.progressSection) ui.progressSection.classList.add("hidden");
+            if (ui.progressSection) ui.progressSection.classList.add("hidden");
             if (appState.progressSource) {
                 appState.progressSource.close();
             }
@@ -444,6 +427,9 @@
         form.method = "POST";
         form.action = API.download;
         form.target = "downloadFrame";
+        // Explicitly match the backend's urlencoded parser.
+        form.enctype = "application/x-www-form-urlencoded";
+        form.acceptCharset = "UTF-8";
         form.className = "hidden";
 
         Object.entries(payload).forEach(([key, value]) => {
@@ -492,18 +478,10 @@
         });
     }
 
-    async function handlePickFolder() {
-        if (ui.folderHint) {
-            ui.folderHint.textContent =
-                "Downloads use your browser settings. Enable the save dialog to choose a folder.";
-        }
-    }
-
     document.addEventListener("DOMContentLoaded", () => {
         initUi();
         if (ui.analyzeBtn) ui.analyzeBtn.addEventListener("click", handleAnalyze);
         if (ui.downloadBtn) ui.downloadBtn.addEventListener("click", handleDownload);
-        if (ui.pickFolderBtn) ui.pickFolderBtn.addEventListener("click", handlePickFolder);
         if (ui.linkInput) {
             ui.linkInput.addEventListener("keydown", (event) => {
                 if (event.key === "Enter") {
