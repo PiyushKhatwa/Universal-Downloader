@@ -24,9 +24,6 @@ if (process.platform !== "win32") {
 }
 
 
-// const YTDLP_PATH = "C:\\Users\\piyus\\AppData\\Local\\Microsoft\\WinGet\\Links\\yt-dlp.exe";
-// const FFMPEG_PATH =
-//     process.env.FFMPEG_PATH || "C:\\Users\\piyus\\AppData\\Local\\Microsoft\\WinGet\\Links\\ffmpeg.exe";
 const isWindows = process.platform === "win32";
 
 const YTDLP_PATH = isWindows
@@ -134,6 +131,7 @@ app.use("/api", (req, res, next) => {
         return;
     }
     if (!req.path.startsWith("/progress") && !req.path.startsWith("/download")) {
+        // Ensure JSON responses for non-stream endpoints.
         res.setHeader("Content-Type", "application/json");
     }
     next();
@@ -327,6 +325,8 @@ app.get("/api/progress/:id", (req, res) => {
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
+    // Prevent proxy buffering so progress updates stream immediately.
+    res.setHeader("X-Accel-Buffering", "no");
     res.flushHeaders();
 
     attachProgressStream(req.params.id, res);
@@ -373,7 +373,6 @@ const handleAnalyze = (req, res) => {
 };
 
 app.post("/api/analyze", handleAnalyze);
-app.post("/analyze", handleAnalyze);
 
 app.post("/api/download", async (req, res) => {
     const { url, formatId, kind, title, downloadId } = req.body;
@@ -432,11 +431,12 @@ app.post("/api/download", async (req, res) => {
             setTimeout(() => closeProgress(id), 2000);
         };
 
-        stream.on("close", () => {
-            cleanup(true);
-        });
         stream.on("error", () => {
             cleanup(false);
+        });
+        // Cleanup after the response finishes to avoid deleting before the stream completes.
+        res.on("finish", () => {
+            cleanup(true);
         });
         res.on("close", () => {
             stream.destroy();
@@ -444,14 +444,18 @@ app.post("/api/download", async (req, res) => {
         });
     } catch (err) {
         sendProgress(id, { type: "error", message: err.message || "Download failed." });
-        res.status(500).json({ error: err.message || "Download failed." });
+        if (!res.headersSent && !res.writableEnded) {
+            res.status(500).json({ error: err.message || "Download failed." });
+        }
         setTimeout(() => closeProgress(id), 2000);
     }
 });
 
 app.use((err, req, res, next) => {
     if (req.path && req.path.startsWith("/api")) {
-        res.status(500).json({ error: "Server error. Please try again." });
+        if (!res.headersSent) {
+            res.status(500).json({ error: "Server error. Please try again." });
+        }
         return;
     }
     next(err);
@@ -460,10 +464,6 @@ app.use((err, req, res, next) => {
 app.use("/api", (req, res) => {
     res.status(404).json({ error: "API route not found." });
 });
-
-// app.listen(3000, () => {
-//     console.log("Server running at http://localhost:3000");
-// });
 
 const PORT = process.env.PORT || 3000;
 
